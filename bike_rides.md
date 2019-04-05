@@ -1,17 +1,10 @@
----
-title: "Bikes in Seattle"
-author: "@data4viz"
-output:
-    html_document:
-      keep_md: true
-      
----
-
+Bikes in Seattle
+================
+@data4viz
 
 Importing packages
 
-
-```r
+``` r
 library(tidyverse)
 library(lubridate)
 library(zoo)
@@ -20,8 +13,7 @@ library(cowplot)
 
 Data import and first cleaning. Adding date columns with lubridate. Removing 2013 and 2019 data since it's only partial.
 
-
-```r
+``` r
 raw_data <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-04-02/bike_traffic.csv", col_types = "ccfdd")
   
 rides <- raw_data %>% 
@@ -33,15 +25,12 @@ rides <- raw_data %>%
   filter(year != 2013, year != 2019)
 ```
 
+-   number of bikes for each month in a year
+-   cumulative number of bikes in each year since January
+-   month-over-month growth rate
+-   year-over-year growth rate
 
-- number of bikes for each month in a year
-- cumulative number of bikes in each year since January
-- month-over-month growth rate
-- year-over-year growth rate
-
-
-
-```r
+``` r
 rides_monthly <- rides %>%
   group_by(yearmonth, year, month) %>% 
   summarise(number_of_bikes = sum(bike_count,na.rm = TRUE)) %>% 
@@ -67,9 +56,9 @@ rides_monthly %>%
 bikes_by_year
 ```
 
-![](bike_rides_files/figure-html/Cumulative bikes-1.png)<!-- -->
+![](bike_rides_files/figure-markdown_github/Cumulative%20bikes-1.png)
 
-```r
+``` r
 bikes_ma <-
 rides_monthly %>% 
   ggplot(aes(x = yearmonth, y = ma12, group = 1)) +
@@ -82,13 +71,11 @@ rides_monthly %>%
 bikes_ma
 ```
 
-![](bike_rides_files/figure-html/Cumulative bikes-2.png)<!-- -->
+![](bike_rides_files/figure-markdown_github/Cumulative%20bikes-2.png)
 
 Making a heatmap
 
-
-
-```r
+``` r
 rides_direction <- rides %>%
   group_by(yearmonth, direction) %>% 
   summarise(number_of_bikes = sum(bike_count,na.rm = TRUE)) %>% 
@@ -111,13 +98,11 @@ rides_direction %>%
 heatmap
 ```
 
-![](bike_rides_files/figure-html/Growth by direction-1.png)<!-- -->
+![](bike_rides_files/figure-markdown_github/Growth%20by%20direction-1.png)
 
 Importing an image and combining plots
 
-
-
-```r
+``` r
 #importing a picture
 bike_pic <- 
   ggdraw() + 
@@ -130,4 +115,3 @@ plot_grid(bikes_by_year, bikes_ma, heatmap, bike_pic, ncol = 2)
 
 cowplot::ggsave("combined_plot.jpg", width = 800, height = 400, units = "mm")
 ```
-
