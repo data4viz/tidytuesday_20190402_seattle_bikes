@@ -61,8 +61,11 @@ rides_monthly %>%
   ggplot(aes(x = as.factor(month(yearmonth)), y = cumsum, group = year, col = as.factor(year))) +
   geom_line(size = 1.5) +
   theme_light() +
-  scale_color_discrete(name = "Year") #change legend name
-
+  scale_color_discrete(name = "Year:")+ #change legend name
+  scale_y_continuous(labels = scales::number_format()) +
+  labs(x = "Month", subtitle = "Total number of bikes since the beginning of the year", y = " ") +
+  theme(legend.position = "top")
+  
 bikes_by_year
 
 
@@ -70,7 +73,10 @@ bikes_ma <-
 rides_monthly %>% 
   ggplot(aes(x = yearmonth, y = ma12, group = 1)) +
    geom_col(aes(y = number_of_bikes), fill = "steelblue") +
-  geom_line(color = "black", size = 1.5)
+  geom_line(color = "black", size = 1.5) +
+  scale_y_continuous(labels = scales::number_format()) +
+  theme_light() +
+  labs(title = "There is high seasonality in the number of bikes", subtitle = "Total number of bikes and 12-month moving average", x = " ", y = " " )
  
 bikes_ma
 
@@ -89,16 +95,17 @@ rides_direction <- rides %>%
 filter(yearmonth  >= "2016-01-01", yearmonth  <= "2018-12-01")
 
 
-
+heatmap <-
 rides_direction %>% 
   ggplot(aes(x = direction, y = yearmonth)) +
   geom_tile(aes(fill = number_of_bikes), width = 1) +
-  scale_fill_gradient(low = "white", high = "darkgreen") +
+  scale_fill_gradient(low = "white", high = "darkgreen", name = "Number of bikes") +
   scale_x_discrete(expand = c(0,0)) +
+  labs(x = "Direction", y = "Time", title = "There is big difference across the regions",subtitle = "Heatmap" ) +
   theme(panel.background = element_blank())
   
 
-
+heatmap
 
 
 ```
