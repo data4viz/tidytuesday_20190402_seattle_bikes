@@ -10,19 +10,18 @@ output:
 
 Importing packages
 
-```{r Packges, message=FALSE, warning=FALSE}
 
+```r
 library(tidyverse)
 library(lubridate)
 library(zoo)
 library(cowplot)
-
 ```
 
 Data import and first cleaning. Adding date columns with lubridate. Removing 2013 and 2019 data since it's only partial.
 
-```{r Data Import}
 
+```r
 raw_data <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-04-02/bike_traffic.csv", col_types = "ccfdd")
   
 rides <- raw_data %>% 
@@ -32,7 +31,6 @@ rides <- raw_data %>%
                  month = month(datetime),
                  yearmonth = date(floor_date(datetime, unit = "month"))) %>% 
   filter(year != 2013, year != 2019)
-
 ```
 
 
@@ -42,8 +40,8 @@ rides <- raw_data %>%
 - year-over-year growth rate
 
 
-```{r Cumulative bikes, warning=FALSE}
 
+```r
 rides_monthly <- rides %>%
   group_by(yearmonth, year, month) %>% 
   summarise(number_of_bikes = sum(bike_count,na.rm = TRUE)) %>% 
@@ -67,8 +65,11 @@ rides_monthly %>%
   theme(legend.position = "top")
   
 bikes_by_year
+```
 
+![](bike_rides_files/figure-html/Cumulative bikes-1.png)<!-- -->
 
+```r
 bikes_ma <-
 rides_monthly %>% 
   ggplot(aes(x = yearmonth, y = ma12, group = 1)) +
@@ -79,14 +80,15 @@ rides_monthly %>%
   labs(title = "There is high seasonality in the number of bikes", subtitle = "Total number of bikes and 12-month moving average", x = " ", y = " " )
  
 bikes_ma
-
 ```
+
+![](bike_rides_files/figure-html/Cumulative bikes-2.png)<!-- -->
 
 Making a heatmap
 
 
-```{r Growth by direction}
 
+```r
 rides_direction <- rides %>%
   group_by(yearmonth, direction) %>% 
   summarise(number_of_bikes = sum(bike_count,na.rm = TRUE)) %>% 
@@ -107,15 +109,15 @@ rides_direction %>%
   
 
 heatmap
-
-
 ```
+
+![](bike_rides_files/figure-html/Growth by direction-1.png)<!-- -->
 
 Importing an image and combining plots
 
 
-```{r Plotting with Cowplot, warning=FALSE}
 
+```r
 #importing a picture
 bike_pic <- 
   ggdraw() + 
@@ -127,6 +129,5 @@ plot_grid(bikes_by_year, bikes_ma, heatmap, bike_pic, ncol = 2)
 
 
 cowplot::ggsave("combined_plot.jpg", width = 800, height = 400, units = "mm")
-
 ```
 
